@@ -815,7 +815,8 @@ function unique<T>(values: T[]): T[] {
 	return Array.from(new Set(values));
 }
 
-let andFormatter, orFormatter
+let andFormatter: any
+let orFormatter: any
 
 function typeErrorMessageMultipleValues(expectedType: AssertionTypeDescription | AssertionTypeDescription[], values: unknown[]): string {
 	if(andFormatter && global.Intl) andFormatter = new global.Intl.ListFormat('en', {style: 'long', type: 'conjunction'})
