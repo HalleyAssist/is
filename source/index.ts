@@ -815,13 +815,15 @@ function unique<T>(values: T[]): T[] {
 	return Array.from(new Set(values));
 }
 
-const andFormatter = new Intl.ListFormat('en', {style: 'long', type: 'conjunction'});
-const orFormatter = new Intl.ListFormat('en', {style: 'long', type: 'disjunction'});
+let andFormatter, orFormatter
 
 function typeErrorMessageMultipleValues(expectedType: AssertionTypeDescription | AssertionTypeDescription[], values: unknown[]): string {
+	if(andFormatter && global.Intl) andFormatter = new global.Intl.ListFormat('en', {style: 'long', type: 'conjunction'})
+	if(orFormatter && global.Intl) orFormatter = new global.Intl.ListFormat('en', {style: 'long', type: 'disjunction'})
+	
 	const uniqueExpectedTypes = unique((isArray(expectedType) ? expectedType : [expectedType]).map(value => `\`${value}\``));
 	const uniqueValueTypes = unique(values.map(value => `\`${is(value)}\``));
-	return `Expected values which are ${orFormatter.format(uniqueExpectedTypes)}. Received values of type${uniqueValueTypes.length > 1 ? 's' : ''} ${andFormatter.format(uniqueValueTypes)}.`;
+	return `Expected values which are ${orFormatter?orFormatter.format(uniqueExpectedTypes):uniqueExpectedTypes.join(',')}. Received values of type${uniqueValueTypes.length > 1 ? 's' : ''} ${andFormatter?andFormatter.format(uniqueValueTypes):uniqueValueTypes.join(',')}.`;
 }
 
 // Type assertions have to be declared with an explicit type.
